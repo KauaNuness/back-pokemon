@@ -6,24 +6,24 @@ import lombok.*;
 import java.time.LocalDateTime;
 
 @Entity
-@AllArgsConstructor
-@NoArgsConstructor
+@Table(name = "USUARIO")
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 @Builder
 @ToString
-@Table(name = "USUARIO")
 public class Usuario {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ID_USUARIO")
     private Integer idUsuario;
 
     @Column(name = "NOME_USUARIO")
     private String nome;
 
-    @Column(name = "EMAIL_USUARIO")
+    @Column(name = "EMAIL_USUARIO", unique = true)
     private String email;
 
     @Column(name = "SENHA_USUARIO")
@@ -37,5 +37,4 @@ public class Usuario {
 
     @Column(name = "ID_IMAGEM")
     private Integer idImagem;
-
 }

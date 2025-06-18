@@ -6,6 +6,7 @@ import com.kaua.pokemon.model.Usuario;
 import com.kaua.pokemon.repository.UsuarioRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -18,24 +19,25 @@ public class UsuarioService {
 
     private final UsuarioRepository repository;
     private final UsuarioMapper mapper;
+    private final PasswordEncoder passwordEncoder;
 
-    public UsuarioDTO criarUsuario(UsuarioDTO dto){
+    public UsuarioDTO criarUsuario(UsuarioDTO dto) {
         Usuario usuario = mapper.toEntity(dto);
-        System.out.println("Usuario convertido do DTO: " + usuario);
+        usuario.setSenha(passwordEncoder.encode(dto.getSenha()));
         usuario.setDthrCadastro(LocalDateTime.now());
         usuario.setDthrAtualizacao(LocalDateTime.now());
         Usuario salvo = repository.save(usuario);
-        System.out.println("Usuario salvo: " + salvo);
         return mapper.toDTO(salvo);
     }
 
-    public List<UsuarioDTO> listarUsuarios(){
-        return repository.findAll().stream()
+    public List<UsuarioDTO> listarUsuarios() {
+        return repository.findAll()
+                .stream()
                 .map(mapper::toDTO)
                 .collect(Collectors.toList());
     }
 
-    public UsuarioDTO buscarPorId(Integer id){
+    public UsuarioDTO buscarPorId(Integer id) {
         Usuario usuario = repository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Usuário não encontrado"));
         return mapper.toDTO(usuario);
@@ -47,5 +49,4 @@ public class UsuarioService {
         }
         repository.deleteById(id);
     }
-
 }
